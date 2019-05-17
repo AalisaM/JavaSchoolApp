@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:o="http://omnifaces.org/ui"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xsi:schemaLocation="http://omnifaces.org/ui ">
+<h:head>
+    <title>Display</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"/>
+    <style type="text/css">
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header-menu a {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 26px;
+            text-align: center;
+        }
+
+        .header-menu a:hover {
+            background-color: #6d6d6d;
+        }
+
+        .header-menu {
+            background-color: #424242;
+        }
+
+        .site-padding {
+            padding: 0 5%;
+        }
+
+        .prod{
+            margin-bottom: 3vw;
+        }
+        .product-list {
+            border: 0px !important;
+
+        }
+
+        .site-padding {
+            padding: 0 5%;
+        }
+
+        @media (min-width: 1200px) {
+            .site-padding {
+                padding: 0 10%;
+            }
+        }
+
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .site-content {
+            flex: 1;
+        }
+
+        .content {
+            padding: 25px;
+            border: 1px solid #dddddd;
+        }
+
+        /*header*/
+
+
+
+        .card{
+            outline: 1px solid #d8d8d8;
+            width: 100%;
+            min-height: 380px;
+            border: none;
+            margin-bottom: 30px;
+        }
+
+        .card a:hover {
+
+            text-decoration: none;
+        }
+
+        .card-body {
+            padding: 0.5rem 0.25rem;
+        }
+
+
+        .card-title {
+            height: 28px;
+            /*overflow: hidden;*/
+            text-overflow: ellipsis;
+            color: #646464;
+            font-size: 20px;
+            font-weight: 300;
+            line-height: 21px;
+            text-align: center;
+            margin-bottom: 5px !important;
+            margin-top: 10px;
+        }
+
+        .card-text {
+            color: #f05356;
+            font-size: 20px;
+            line-height: 20px;
+            text-align: center;
+
+        }
+
+        .catalogue{
+            overflow-y: scroll !important;
+        }
+
+        .crop {
+            horiz-align: center;
+            width: 98%;
+            height: 200px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .crop img {
+            height: 200px;
+            margin: 0 -50%;
+        }
+    </style>
+</h:head>
+<h:body>
+<div class="row header navbar-fixed-top fixed-top">
+    <div class="col" style="max-height: 1.5vh">
+        <div class="row header-menu site-padding ">
+            <div>
+                <h:outputLink value="http://#{displayController.getIp()}:8086/store/">
+                    <h:graphicImage width="50px"  url="http://#{displayController.getIp()}:8086/store/assets/images/logo2.png" alt="logo" style="width:50px; float:left"/>
+                    <p style="font-size: 2rem; width: 20vw; margin-top: 1.5vw">T-Store Display</p>
+                </h:outputLink>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid" style="background-color: #FDFCFC">
+    <div class="site-content">
+        <div class="row site-padding catalogue">
+            <div class="col content" style="margin-top: 15vh; margin-left: 2vw; width: 60vw; background-color: #ffffff">
+                <div class="row justify-content-start product-list">
+                    <ui:repeat value="#{displayController.products}" var="product">
+                        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 " style="margin-bottom: 3vw">
+                            <div class="card">
+                                <div>
+                                    <h:outputLink value="http://#{displayController.getIp()}:8086/store/product/#{product.id}">
+                                        <div class="card-body">
+                                            <div style="text-align: center">
+                                                <div class="crop">
+                                                    <h:graphicImage url="http://#{displayController.getIp()}:8190/#{product.imageSource}" rendered="#{not empty product.imageSource}"  styleClass="prod"/>
+                                                    <h:graphicImage url="http://#{displayController.getIp()}:8086/store/assets/images/product.png" rendered="#{empty product.imageSource}" styleClass="prod"/>
+                                                </div>
+                                            </div>
+
+                                            <h3 class="card-title productname">#{product.name}</h3>
+                                            <p class="card-text productprice">#{product.price}</p>
+                                        </div>
+                                    </h:outputLink>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</h:body>
+
+<script type="text/javascript">
+    function socketListener(message, channel, event) {
+        console.log(message);
+        window.location.reload();
+    };
+
+</script>
+<o:socket channel="clock" scope="application" onmessage="socketListener"/>
+</html>

@@ -1,0 +1,72 @@
+version: "3.6"
+
+services:
+  imagebroker:
+    build:
+      context: ./ImageBroker
+      dockerfile: Dockerfile
+    ports:
+      - "8190:8080"
+    volumes:
+      - type: bind
+        source: /home/node/app/img
+        target: /home/node/app/img
+  db:
+    container_name: "db"
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    environment:
+      - MYSQL_DATABASE:"store"
+      - MYSQL_USER:"userT"
+      - MYSQL_PASSWORD:"1234"
+      - MYSQL_ROOT_PASSWORD:"1234"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqlvol:/var/lib/mysql
+      
+      
+  activemq:
+    image: rmohr/activemq
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+
+  store:
+    container_name: "store"
+    build:
+      context: ./OnlineStore
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - DB_NAME=store
+      - DB_USER=userT
+      - DB_PASS=1234
+      - DB_URI=db:3306
+    depends_on:
+      - imagebroker
+      - db
+      - activemq
+    ports:
+      - "8086:8080"
+    volumes:
+      - type: bind
+        source: /home/node/app/img
+        target: /usr/local/tomcat/webapps/images
+
+  display:
+    container_name: "display"
+    build:
+      context: ./DisplayApp
+      dockerfile: Dockerfile
+    depends_on:
+      - store
+      - activemq
+    ports:
+      - "8087:8080"
+      - "9990:9990" 
+
+
+volumes:
+  mysqlvol: {}

@@ -1,0 +1,10 @@
+FROM mysql
+
+ENV MYSQL_DATABASE=store
+ENV MYSQL_USER=userT
+ENV MYSQL_PASSWORD=1234
+ENV MYSQL_ROOT_PASSWORD=1234
+
+COPY dump/ /docker-entrypoint-initdb.d/
+
+EXPOSE 3306
